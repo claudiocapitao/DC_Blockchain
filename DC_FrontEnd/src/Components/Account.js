@@ -22,7 +22,7 @@ function Account(props) {
     const [variant, setVariant] = useState("success");
     const [showSuccess, setShowSuccess] = useState(false);
     const [text, setText] = useState("");
-
+    const [transaction, setTransaction] = useState({});
     const [trig, setTrig] = useState(false)
 
     const [miningData, setMiningData] = useState(
@@ -52,9 +52,11 @@ function Account(props) {
                 toAddress: toAddressInput,
                 fromAdress: fromAddressInput,
                 amount: amount
+
             }
+            setTransaction(thisTransaction)
             console.log(thisTransaction);
-            const transres = await axios.post(`http://localhost:4000/blocks/update`, thisTransaction);
+            const transres = await axios.post(`http://localhost:4000/blocks/update/${fromAddressInput}`, thisTransaction);
             console.log(transres.data);
         }
         catch (err) {
@@ -72,6 +74,7 @@ function Account(props) {
             console.log(`I'm connected with the back-end`);
         });
 
+        // establish connection with the serversame header as Server
         socket.on("sendDataForMining", (arg) => {
             console.log(arg);
             setMiningData(arg)

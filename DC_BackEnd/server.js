@@ -3,11 +3,14 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const SHA256 = require('crypto-js/sha256');
 let Block = require('./models/block.model');
+let DCWallet = require('./models/DCWallet.model');
+let User = require('./models/user.model')
 
 const uri = process.env.ATLAS_URI;
-mongoose.connect('mongodb+srv://DC:DC@cluster0.zwe64.mongodb.net/Blockchain?retryWrites=true&w=majority'
+mongoose.connect('mongodb+srv://user:user@cluster0.xab4r.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
     , { useNewUrlParser: true, useCreateIndex: true }
 );
+
 const connection = mongoose.connection;
 connection.once('open', () => {
     console.log("MongoDB database connection established successfully");
@@ -23,13 +26,16 @@ app.use(cors());
 
 const blockRouter = require('./routes/block');
 const UserRouter = require('./routes/user');
+const DCWalletRouter = require('./routes/DC');
+
 
 app.use('/blocks', blockRouter);
 app.use('/users', UserRouter);
+app.use('DCWallet', DCWalletRouter);
 
-// Create genesis block
 
-const genesisBlock = async () => {
+
+const genesisFunction = async () => {
 
     const block = await Block.aggregate([{ $sort: { id: -1 } }, { $limit: 1 }])
     if (!block.length) {
@@ -37,7 +43,14 @@ const genesisBlock = async () => {
 
         // Create hash from message in transactions + timestamp + random nounce
 
+        const DCGenesisWallet = {
+            balance: 10000000
+        }
 
+        const newDCWallet = new DCWallet(DCGenesisWallet);
+        newDCWallet.save();
+
+        // Create genesis block
         const firstBlock = {
             id: Number(0),
             hash: 'First',
@@ -51,7 +64,7 @@ const genesisBlock = async () => {
     }
 }
 
-genesisBlock()
+genesisFunction()
 
 // Receiving transactions data and sending data to variables
 // MISSING:
@@ -64,9 +77,31 @@ let transB = [];
 let transBHashes = [];
 let newTransB = {}
 
-app.post("/blocks/update", async (req, res) => {
-    console.log('############################### New transaction')
 
+//get request for the balance
+
+
+
+app.post("/blocks/update/:address", async (req, res) => {
+    console.log('############################### New transaction')
+    const publicAddress = req.params.address;
+    const users = await User.find()
+
+    let withdrawUser = "";
+    for (var i = 0; i < users.length; i++) {
+        if (users[i].publicKey === publicAddress) {
+            withdrawUser = users[i];
+        }
+    }
+
+    let depositUser = "";
+    for (var i = 0; i < users.length; i++) {
+        if (users[i].publicKey === req.body.toAddress) {
+            depositUser = users[i]
+        }
+    }
+
+    // calculate 
     const timestampNow = Date.now()
     const tHash = SHA256(req.body.toAddress + req.body.fromAdress + req.body.amount + timestampNow).toString();
     const newTrans = { ...req.body, hash: tHash, timestamp: timestampNow }
@@ -74,42 +109,55 @@ app.post("/blocks/update", async (req, res) => {
     transA = [...transA, newTrans]
     transAHashes = [...transAHashes, tHash]
     res.status(200)
-    res.json('Got data')
+    res.json(depositUser);
 
     console.log('###############################')
 });
 
 
 //Merkle tree for even number of elements
-const merkleTreeHash = (a) => {
+const merkleTreeHash = (a, previousHash) => {
+
     console.log(a)
     let b = []
-    if (a.length == 0) {
+    // if there are no hashes
+    if (a.length === 0) {
         console.log(SHA256('0').toString());
-        return SHA256('0').toString();
+        return SHA256(previousHash).toString();
     }
-    else if (a.length == 1) {
+    else if (a.length === 1) {
         console.log(a[0])
         return a[0]
     }
-    else if (a.length % 2 != 0) {
+    // uneven numbers
+    // 7
+    else if (a.length % 2 !== 0) {
+        // length -1 because you want to have even number as length
         for (let i = 0; i < a.length - 1; i += 2) {
+            // more than 3 hashes ==> hash the two hashes together
             if (a.length - i > 3) {
                 b.push(SHA256(a[i] + a[i + 1]).toString())
+                // if there are 3 hashes left
             } else {
+                // 3 hashes tranform to 2 hashes
                 b.push(SHA256(a[i] + a[i + 1]).toString())
                 b.push(SHA256(a[i + 2]).toString())
                 console.log(b)
             }
         }
+        // call rekursive function
         return merkleTreeHash(b)
     }
+
+    // two hashes
     else if (a.length == 2) {
         console.log(a)
         console.log(b)
         console.log(SHA256(a[0] + a[1]).toString())
         b.push(SHA256(a[0] + a[1]).toString())
         return merkleTreeHash(b)
+
+        // even higher than two
     } else {
         for (let i = 0; i < a.length; i += 2) {
             b.push(SHA256(a[i] + a[i + 1]).toString())
@@ -136,22 +184,26 @@ io.on('connect', (socket) => {
     console.log('New client connected');
 });
 
+
 let dataToMine = {}
+// block the next user in 10 minutes to mine new blocks 
 let serverCreatesTheBlock = true;
+// turns false if user mined the block and creates after that a new block
 
 // MISSING:
 //   1 - Decide what to do with second block block - mining parametters
 
 setInterval(() => {
     console.log('---- START - setInterval ----')
-
+    // all the transactions in this intervall goes to transB, 
     transB = [...transA];
     transBHashes = [...transAHashes]
+    // reset transA 
     transA = [];
     transAHashes = []
 
-    const merkleHash = merkleTreeHash(transBHashes)
-    console.log(merkleHash)
+
+
 
     console.log('Switch in transactions is over')
 
@@ -165,6 +217,8 @@ setInterval(() => {
         const previousBlockHash = await block[0].hash
         const previousBlockNonce = await block[0].nonce
         console.log(maxBlockID)
+        const merkleHash = merkleTreeHash(transBHashes, previousBlockHash);
+        console.log(merkleHash)
 
         dataToMine = {
             merkleHash,
@@ -172,9 +226,11 @@ setInterval(() => {
             previousBlockHash,
             previousBlockNonce,
             timestamp,
-            difficultyHash: '05'
+            // get hashnumber 
+            difficultyHash: '005'
         }
 
+        //sends data to the frontend
         io.emit("sendDataForMining", dataToMine);
 
         console.log(serverCreatesTheBlock)
@@ -182,8 +238,8 @@ setInterval(() => {
             console.log('Server creates the block: true')
             const nextBlock = {
                 id: Number(maxBlockID),
-                hash: 'test',
-                previousHash: 'tes',
+                hash: merkleHash,
+                previousHash: previousBlockHash,
                 nonce: Number(1),
                 timestamp,
                 transactions: transB
@@ -198,11 +254,11 @@ setInterval(() => {
     }
     myfunc()
 
-}, 10000)
+}, 100000)
 
 io.on("connection", (socket) => {
     console.log('Connection')
-    socket.once("sendHash", async (testUserFoundHash) => {
+    socket.once("sendHash", (testUserFoundHash) => {
         console.log('Hash: ')
         console.log(testUserFoundHash);
 

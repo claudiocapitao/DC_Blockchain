@@ -39,6 +39,11 @@ router.route('/add').post(async (req, res) => {
     }
 })
 
+
+router.route('/getBlocks').get(async (req, res) => {
+    const getBlocks = await Block.aggregate([{ $sort: { id: -1 } }, { $limit: 5 }]);
+    res.json(getBlocks);
+})
 /* router.route('/update/:id').post((req, res) => {
 
     console.log("#### /update/:id, ")
