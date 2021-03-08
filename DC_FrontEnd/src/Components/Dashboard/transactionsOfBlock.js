@@ -2,13 +2,16 @@ import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actions from '../../actions/app.action';
+import Moment from 'react-moment';
+import './transactionsOfBlock.css';
+import Icon from '../../Logo/DCoinIconColor.svg';
 
 
 const DisplayTransactionsOfBlock = (props) => {
     const transactions = props.applicationState.block.transactions;
     //test
     return (
-        <div>
+        <div className="ToB">
 
             <h1>Transactions of the {props.applicationState.block.id} block</h1>
             <table>
@@ -26,11 +29,18 @@ const DisplayTransactionsOfBlock = (props) => {
                     {transactions.map(transaction => {
                         return (
                             <tr>
-                                <td>{transaction.fromAdress}</td>
-                                <td>{transaction.toAdress}</td>
-                                <td>{transaction.amount}</td>
-                                <td>{transaction.hash}</td>
-                                <td>{transaction.timestamp}</td>
+                                {(transaction.fromAdress === "DCWallet") ?
+                                    (     
+                                        <td className="DCWallet">
+                                            <span>DC</span>
+                                            <span>Wallet</span>
+                                        </td>
+                                    ) : <td className="KeyNumber">transaction.fromAdress</td>
+                                }
+                                <td className="KeyNumber">{transaction.toAddress}</td>
+                                <td className="amount"><img src={Icon} alt="DC"/>{transaction.amount}</td>
+                                <td className="KeyNumber">{transaction.hash}</td>
+                                <td><Moment format="DD/MM/YYYY HH:mm">{transaction.timestamp}</Moment></td>
                             </tr>
                         );
                     })}

@@ -28,7 +28,7 @@ function Copy(props) {
           ref={textAreaRef}
           value={props.text}
           style={{width: "100%"}}
-          rows="10"
+          rows="6"
         />
       </form>
       {/* <div>

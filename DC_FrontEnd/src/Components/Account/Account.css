@@ -1,11 +1,28 @@
-/* .Account .AccountRight{
-    height: 850px;
-}
-*/
-
 .Account{
     background-image: url(../../Logo/DChain_background_transparent.svg);
     padding: 80px !important;
+}
+
+.Account img{
+    height: 30px;
+    padding-bottom: 5px;
+    margin-right: 5px;
+}
+
+.Account button{
+    width: 100%;
+}
+
+.AccoutCol{
+    margin-bottom: 40px;
+}
+
+.AccoutCol.col-lg-4.col-12{
+    margin-bottom: 40px;
+}
+
+.AccoutCol.col {
+    margin-bottom: 40px;
 }
 
 .Account .Mining, .TransCards{
@@ -15,6 +32,40 @@
     box-shadow: 1px 1px 5px 5px  rgb(214, 214, 214);
 }
 
+/* *******************************************AccountCard********************************************** */
+
+
+
+.Account .AccountCard{
+    box-shadow: 1px 1px 5px 5px rgb(214, 214, 214);
+}
+
+.Account .AccountCard .card-title{
+    font-size: 30px;
+    text-align: center;
+    /* margin-bottom: 50px; */
+}
+
+.Account .AccountCard .card-subtitle{
+    text-align: center;
+}
+
+.Account .AccountCard .card-header{
+    height: 2rem;
+    padding: 0 !important;
+}
+
+.Account .AccountCard button{
+    padding: 0 !important;
+    color: #343a40;
+    background-color: transparent;
+}
+
+
+/* *******************************************New Transaction********************************************** */
+
+/* *******************************************Mining********************************************** */
+
 .Account .Mining {
     padding: 15px;
 }
@@ -23,13 +74,100 @@
     margin-bottom: 30px;
 }
 
+/* *******************************************Transactions********************************************** */
 
 .Account .TransCards{
-    height: 500px;
+    height: 700px;
     overflow-y: auto;
     overflow-x: hidden;
     
 };
+
+/* Dear Code Reviewer, I have no clue why this is needed twice, just do not remove the duplicate and everything works just fine :'D */
+
+div.Account div.row div.AccountRight.col-lg-8.col-12 div.row div.AccoutCol.col div.TransCards div.TransHeadings h3{
+    box-shadow: 1px 1px 3px rgb(214, 214, 214);
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
+    border-bottom: 1px rgba(0, 0, 0, 0.125) solid;
+    padding: 20px 0;
+    margin-bottom: 15px !important;
+    width: 100%;
+    background-color: rgb(255, 255, 255);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.TransHeadings{
+    box-shadow: 1px 1px 3px rgb(214, 214, 214);
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
+    border-bottom: 1px rgba(0, 0, 0, 0.125) solid;
+    padding: 20px 0;
+    margin-bottom: 15px !important;
+    width: 100%;
+    background-color: rgb(255, 255, 255);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.inline{
+    display: inline;
+}
+
+.Account .TransCard{
+    margin: 15px;
+}
+
+.Account .TransCol{
+    text-align: center;
+    font-weight: bold;
+    align-self: center;
+    letter-spacing: 3px;
+}
+
+.Account .TransColHash{
+    text-align: justify;
+    align-self: center;
+}
+
+.Account .TransColHash p{
+    margin: 10px 20px 10px 0 !important;
+}
+
+.TransCol .year{
+    font-size: 12px;
+    font-weight: 500;
+    word-break: keep-all;
+}
+
+.Account .red{
+    background-color: rgba(255, 0, 0, 0.1);
+}
+
+.Account .green{
+    background-color: rgba(5, 172, 5, 0.1);
+}
+
+.Account .header{
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.Account .Colhead{
+    align-self: center;
+}
+
+.Account .Colhead p{
+    margin-bottom: 0 !important;
+}
+
+.Account .filters{
+    width: 80%;
+    margin: 25px auto 0 auto;
+}
 
 /* ::-webkit-scrollbar {
     width: 3px;
@@ -48,83 +186,13 @@
   } */
 
 
-/* .AccountCard.card{
-    height: 400px !important;
-} */
 
-.Account .KeyNumber{
-    word-break:break-all;
-}
 
-.Account .AccountCard{
-    box-shadow: 1px 1px 5px 5px rgb(214, 214, 214);
-}
 
-.Account img{
-    height: 30px;
-    padding-bottom: 5px;
-    margin-right: 5px;
-}
 
-.Account .AccountCard .card-title{
-    font-size: 30px;
-    text-align: center;
-    /* margin-bottom: 50px; */
-}
 
-.Account .AccountCard .card-subtitle{
-    text-align: center;
-}
 
-/* .AccountCol{
-    margin-bottom: 40px;
-} */
 
-.AccoutCol.col-lg-3.col-12{
-    margin-bottom: 40px;
-}
 
-.AccoutCol.col {
-    margin-bottom: 40px;
-}
 
-.Account .TransHeading{
-    box-shadow: 1px 1px 3px rgb(214, 214, 214);
-    border-top-left-radius: 0.25rem;
-    border-top-right-radius: 0.25rem;
-    border-bottom: 1px rgba(0, 0, 0, 0.125) solid;
-    padding: 20px 0;
-    margin-bottom: 15px !important;
-    width: 100%;
-    background-color: rgb(255, 255, 255);
-    position: sticky;
-    top: 0;
-    z-index: 1;
-}
 
-.Account .TransCard{
-    margin: 15px;
-}
-
-.Account button{
-    width: 100%;
-}
-
-.Account .AccountCard .card-header{
-    height: 2rem;
-    padding: 0 !important;
-}
-
-.Account .AccountCard button{
-    padding: 0 !important;
-    color: #343a40;
-    background-color: transparent;
-}
-
-.Account .red{
-    background-color: rgba(255, 0, 0, 0.1);
-}
-
-.Account .green{
-    background-color: rgba(5, 172, 5, 0.1);
-}

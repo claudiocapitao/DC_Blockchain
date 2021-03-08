@@ -43,6 +43,7 @@
 .Dashboard .value{
     word-break:break-all;
     font-size: 20px;
+    color: #343a40;
 }
 
 .Dashboard .time{

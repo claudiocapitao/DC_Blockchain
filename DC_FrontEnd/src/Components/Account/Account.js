@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { Button, Form, Alert, Card, ListGroup, Row, Col, Accordion } from 'react-bootstrap'
+import React, { useState, useEffect } from 'react';
+import  { Button, Form, Alert, Card, ListGroup, Row, Col, Accordion, Collapse } from 'react-bootstrap';
 import Transaction from './transaction_class';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -10,8 +10,11 @@ import SHA256 from 'crypto-js/sha256';
 import Moment from 'react-moment';
 import './Account.css';
 import Icon from '../../Logo/DCoinIconColor.svg';
-import Loading from './Loading';
+import { FaCaretDown, FaCaretUp, FaFilter } from 'react-icons/fa';
+// import Loading from './Loading';
 import Copy from './Copy';
+import Spinning from './Spinning';
+import moment from 'moment';
 import config from '../../config/config';
 
 
@@ -33,7 +36,9 @@ function Account(props) {
     const [showSuccessTrans, setShowSuccessTrans] = useState(false);
     const [textTrans, setTextTrans] = useState("");
     const [transactions, setTransaction] = useState([]);
-    const [trig, setTrig] = useState(false)
+    const [trig, setTrig] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [filter, setFilter] = useState(0);
 
     const [miningData, setMiningData] = useState(
         {
@@ -230,11 +235,75 @@ function Account(props) {
     //   2 - Display balance by doing a http request that updates every 10-60 sec
 
 
-    return (
-        <div className="Account">
+    const keyExpand = (fromAdress, shortKey, longKey) => {
+        
+        for (let i = 0; i < 10 ; i++){
+            shortKey.push(fromAdress[i])
+        }
+        for (let j = 10; j < fromAdress.length ; j++){
+            longKey.push(fromAdress[j])
+        }
+    }
 
+    const day = (timestamp) => {
+        let today = moment().format('DDMMYYYY');
+        let transTimestamp = moment(timestamp).format('DDMMYYYY')
+        if (transTimestamp === today){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    const week = (timestamp) => {
+        let week = moment().format('wYYYY');
+        let transTimestamp = moment(timestamp).format('wYYYY')
+        console.log(transTimestamp)
+        if (transTimestamp === week){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    const month = (timestamp) => {
+        let month = moment().format('MMYYYY');
+        let transTimestamp = moment(timestamp).format('MMYYYY')
+        if (transTimestamp === month){
+            return true;
+        } else {
+            return false;
+        }
+    };
+
+    const all = (timestamp) => {
+        return true;
+    };
+
+    
+    const transFilter = (timestamp, n) => {
+        switch(n){
+            case "1":
+                return(month(timestamp));
+            case "2":
+                return(week(timestamp));
+            case "3":
+                return(day(timestamp));
+            default:
+                return(all(timestamp));
+        }
+    }
+
+    const handleChange = (e) => {
+        setFilter(e.target.value)
+    }
+
+    return (
+        <div className="Account"> 
+            
             <Row>
-                <Col xs={12} lg={3} className="AccoutCol" >
+                <Col xs={12} lg={4} className="AccoutCol" >
+{/* *******************************************AccountCard********************************************** */}
                     <Card className="AccountCard">
                         <Card.Body>
 
@@ -263,7 +332,7 @@ function Account(props) {
                                 </Card>
                             </Accordion>
                         </Card.Body>
-
+{/* *******************************************New Transaction********************************************** */}
                         <Accordion>
                             <Card>
                                 <Card.Header>
@@ -272,14 +341,21 @@ function Account(props) {
                                 </Accordion.Toggle>
                                 </Card.Header>
                                 <Accordion.Collapse eventKey="0">
-                                    <Card.Body>
+                                <Card.Body>
 
-                                        <Form>
-                                            <Form.Group controlId="textarea">
-                                                <Form.Label>To address<span>*</span></Form.Label>
-                                                <Form.Control value={toAddressInput} onChange={(e) => setToAddressInput(e.target.value)} required />
-                                                <Form.Text className="text-muted">
-                                                    The wallet address where you want to send the money to, <strong>enter only valid addresses!</strong>
+                                    <Form>
+                                        <Form.Group controlId="textarea">
+                                            <Form.Label>To address<span>*</span></Form.Label>
+                                            <Form.Control value={toAddressInput} onChange={(e) => setToAddressInput(e.target.value)} as="textarea" rows={6} required />
+                                            <Form.Text className="text-muted">
+                                                The wallet address where you want to send the money to, <strong>enter only valid addresses!</strong>
+                                            </Form.Text>
+                                        </Form.Group>
+                                        <Form.Group controlId="textarea">
+                                            <Form.Label>Amount<span>*</span></Form.Label>
+                                            <Form.Control value={amount} onChange={(e) => setAmount(e.target.value)} required />
+                                            <Form.Text className="text-muted">
+                                                Amount of money, you would like to send!
                                                 </Form.Text>
                                             </Form.Group>
                                             <Form.Group controlId="textarea">
@@ -301,8 +377,8 @@ function Account(props) {
 
                 </Col>
 
-                <Col xs={12} lg={9} className="AccountRight">
-
+                <Col xs={12} lg={8} className="AccountRight">
+{/* *******************************************Mining********************************************** */}
                     <Row className="MiningRow">
                         <Col className="AccoutCol">
                             <div className="Mining">
@@ -339,8 +415,8 @@ function Account(props) {
                                 <br />
                                 <p> <i>*This is a competition, there is no guarantee that you win DCoins! </i></p>
                                 <Alert variant={variant} show={showSuccess}>
+                                    {variant === "warning" ? <Spinning/> : null}
                                     {text}
-                                    {variant === "warning" ? (<Loading />) : null}
                                 </Alert>
                                 <Button onClick={mineBlock} >Start Mining!</Button>
                             </div>
@@ -348,54 +424,127 @@ function Account(props) {
                     </Row>
                     <Row>
                         <Col className="AccoutCol">
+{/* *******************************************Transactions********************************************** */}
                             <div className="TransCards">
-                                <h3 className="TransHeading">
-                                    Your Transactions
-                                </h3>
+                                <div className="TransHeadings">
+                                    <h3>Your Transactions</h3>
 
-                                {transactions.map(transaction => {
-                                    return (
-                                        <Card className="TransCard">
-                                            {transaction.fromAdress === fromAddressInput ? (
-                                                <Card.Header className="red">Your transactions </Card.Header>
-                                            ) : (
-                                                    <Card.Header className="green">Your transactions </Card.Header>
-                                                )}
-                                            <ListGroup variant="flush">
-                                                <Row>
-                                                    <Col md={9} className="TransCol">
-                                                        {transaction.fromAdress === fromAddressInput ? (
+                                    <Form className="filters">
+                                        <Form.Group controlId="exampleForm.ControlSelect1">
+                                            <Form.Control as="select" onChange={handleChange} value={filter}>
+                                            <option value={0} selected>View All</option> 
+                                            <option value={1}>This Month</option>
+                                            <option value={2}>This Week</option>
+                                            <option value={3}>Today</option>
+                                            </Form.Control>
+                                        </Form.Group>
+                                    </Form>
+                                </div>
+
+                                
+                                    {transactions.map(transaction => {
+                                        if(transFilter(transaction.timestamp,filter)){
+                                        let shortKey = [];
+                                        let longKey = []; 
+                                        transaction.fromAdress === fromAddressInput ? (
+                                        keyExpand(transaction.toAddress, shortKey, longKey)) : (keyExpand(transaction.fromAdress, shortKey, longKey))
+                                    return(
+                                    <Card className="TransCard">
+                                        {transaction.fromAdress === fromAddressInput ? (
+                                            <Card.Header className="red">
+                                                <Row className="header">
+                                                    <Col md={10} className="Colhead">
+                                                        <p className="KeyNumber inline">To: {shortKey}</p> 
+                                                        <Collapse in={open}>
+                                                            <div id="long-key" className="inline">
+                                                            {longKey}
+                                                            </div>
+                                                        </Collapse>
+                                                        <Button
+                                                            onClick={() => setOpen(!open)}
+                                                            aria-controls="long-key"
+                                                            aria-expanded={open}
+                                                            variant="link"
+                                                            style={{width: "30px", margin:"0", padding: "0 0 10px 0"}}
+                                                        >
+                                                            {open === true ? (
+                                                                <FaCaretUp/>
+                                                            ): (<FaCaretDown/>)}
+                                                            
+                                                        </Button>
+                                                    </Col>
+                                                    <Col md={2} className="Colhead">
+                                                        <p><img src={Icon} alt="DC"/> {transaction.amount} </p>
+                                                    </Col>
+                                                </Row>
+                                            </Card.Header>
+                                        ) : (
+                                            <Card.Header className="green">
+                                                <Row className="header">
+                                                    <Col md={10} className="Colhead">
+
+                                                    {(transaction.fromAdress === "DCWallet") ?
+                                                        (     
+                                                            <p className="DCWallet">
+                                                                From: 
+                                                                <span> DC</span>
+                                                                <span>Wallet</span>
+                                                            </p>
+                                                        ) :  <p className="KeyNumber inline">From: {shortKey}</p>
+                                                    }
+                                                    
+
+                                                        {shortKey.length > 10 ? (
                                                             <>
-                                                                <p>To: {transaction.toAddress}</p>
-
+                                                                <Collapse in={open}>
+                                                                    <div id="long-key" className="inline">
+                                                                    {longKey}
+                                                                    </div>
+                                                                </Collapse>
+                                                                <Button
+                                                                    onClick={() => setOpen(!open)}
+                                                                    aria-controls="long-key"
+                                                                    aria-expanded={open}
+                                                                    variant="link"
+                                                                    style={{width: "30px", margin:"0", padding: "0 0 10px 0"}}
+                                                                >
+                                                                    {open === true ? (
+                                                                        <FaCaretUp/>
+                                                                    ): (<FaCaretDown/>)}
+                                                                    
+                                                                </Button>
                                                             </>
-                                                        ) : (
-                                                                <p>From: {transaction.fromAdress}</p>
-                                                            )}
+                                                            ): null}
+                                                        
                                                     </Col>
-                                                    <Col md={3}>
-
-                                                        <Moment format="MMMM Do YYYY, HH:mm:ss">{transaction.timestamp}</Moment>
-
+                                                    <Col md={2} className="Colhead">
+                                                        <p><img src={Icon} alt="DC"/> {transaction.amount} </p>
                                                     </Col>
                                                 </Row>
-                                                <Row>
-                                                    <Col md={9}>
-
-                                                        <p>Hash: {transaction.hash}</p>
-
-                                                    </Col>
-                                                    <Col md={3}>
-
-                                                        <p>Amount: <img src={Icon} alt="DC" /> {transaction.amount} </p>
-
-
-                                                    </Col>
-                                                </Row>
-                                            </ListGroup>
-                                        </Card>
-                                    )
-                                })}
+                                                
+                                            </Card.Header>
+                                        )}
+                                        <ListGroup variant="flush">
+                                            <Row>
+                                                <Col md={2} className="TransCol">
+                                                    <Moment format="MMM">{transaction.timestamp}</Moment>
+                                                    <br/>
+                                                    <Moment format="DD">{transaction.timestamp}</Moment>
+                                                    <br/>
+                                                    <span className="year"><Moment format="YYYY">{transaction.timestamp}</Moment></span>
+                                                                                                        
+                                                </Col>
+                                                <Col md={3} className="TransCol">
+                                                    <Moment format="HH:mm">{transaction.timestamp}</Moment>
+                                                </Col>
+                                                <Col md={2}></Col>
+                                                <Col md={5}  className="TransColHash">
+                                                    <p title="Hash">{transaction.hash}</p>
+                                                </Col>
+                                            </Row>
+                                        </ListGroup>
+                                    </Card>
+                                    )}})}
                             </div>
                         </Col>
                     </Row>

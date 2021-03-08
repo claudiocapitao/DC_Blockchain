@@ -140,64 +140,60 @@ const Dashboard = (props) => {
                         </Row>
                         <Row>
                             <Col xs={12}>
-                                {/* {show === true ? (
-                                                    <DisplayTransactionsOfBlock transactions={blocks.transactions} />
-                                                ) : null} */}
-                                {/* <Button size="sm">Show all</Button> */}
-                                <a href="/transactions" className="time">Show all Transactions</a>
+                                <Button className="time" variant="link" onClick={showTransactions}>Show Transactions</Button>
                             </Col>
                         </Row>
                     </>;
-
-                    return (
-
-                        <>
-                            {view === true && (
-                                <Col md={6}>
-                                    <Cube
-                                        front={contentFront}
-                                        right={contentRight}
-                                        back={contentBack}
-                                        left={contentLeft}
-                                        top={contentTop}
-                                        bottom={contentBottom}
-                                    />
-
-                                </Col>
-                            )}
-                            {view === false && (
-                                <Col xs={12} md={6} lg={4}>
-                                    <Card>
-                                        <Card.Header className="silver-background"><h2>{`Block ${block.id}`}</h2></Card.Header>
-                                        <ListGroup variant="flush">
-                                            <ListGroup.Item>
-                                                <h4>Hash</h4>
-                                                <br />
-                                                {block.hash}
-                                            </ListGroup.Item>
-                                            <ListGroup.Item>
-                                                <h4>Hash of previous Block</h4>
-                                                <br />
-                                                {block.previousHash}
-                                            </ListGroup.Item>
-                                            <ListGroup.Item>
-                                                <h4>Nonce</h4>
-                                                <br />
-                                                {block.nonce}
-                                            </ListGroup.Item>
-                                            <ListGroup.Item>
-                                                <h4>Timestamp</h4>
-                                                <br />
-                                                <Moment format="MMMM Do YYYY, HH:mm:ss">{block.timestamp}</Moment>
-                                            </ListGroup.Item>
-                                            <ListGroup.Item>
-                                                <h4>Transactions</h4>
-                                                <br />
-                                                <Button onClick={showTransactions}>Show Transactions</Button>
-                                            </ListGroup.Item>
-                                        </ListGroup>
-                                    </Card>
-                                    {/* {show === true ? (
+                
+                return (
+                    
+                    <>
+                    {view === true && (
+                        <Col md={6}>
+                        <Cube 
+                            front={contentFront}
+                            right={contentRight}
+                            back={contentBack}
+                            left={contentLeft}
+                            top={contentTop}
+                            bottom={contentBottom}
+                        />
+                        
+                        </Col>
+                    )}
+                    {view === false && (
+                        <Col  xs={12} md={6} lg={4}>
+                        <Card>
+                            <Card.Header className="silver-background"><h2>{`Block ${block.id}`}</h2></Card.Header>
+                                <ListGroup variant="flush">
+                                    <ListGroup.Item>
+                                        <h4>Hash</h4>
+                                        <br />
+                                        {block.hash}
+                                    </ListGroup.Item>
+                                    <ListGroup.Item>
+                                        <h4>Hash of previous Block</h4>
+                                        <br />
+                                        {block.previousHash}
+                                    </ListGroup.Item>
+                                    <ListGroup.Item>
+                                        <h4>Nonce</h4>
+                                        <br />
+                                        {block.nonce}
+                                    </ListGroup.Item>
+                                    <ListGroup.Item>
+                                        <h4>Timestamp</h4>
+                                        <br />
+                                        <Moment format="MMMM Do YYYY, HH:mm:ss">{block.timestamp}</Moment>
+                                    </ListGroup.Item>
+                                    <ListGroup.Item>
+                                    <h4>Transactions</h4>
+                                    <br />
+                                    <Button onClick={showTransactions}>Show Transactions</Button>
+                                </ListGroup.Item>
+                                </ListGroup>
+                        </Card>
+                        {/* {show === true ? (
                             <DisplayTransactionsOfBlock transactions={blocks.transactions} />
                         ) : null} */}
                                 </Col>

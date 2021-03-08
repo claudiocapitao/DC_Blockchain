@@ -1,0 +1,58 @@
+.ToB th{
+    border-right: solid 2px #D5D3CA;
+    background-color: #343a40;
+    color: #D5D3CA;
+}
+
+.ToB th:last-of-type{
+    border-right: solid 2px #343a40;
+}
+
+.ToB th:first-of-type{
+    border-left: solid 2px #343a40;
+}
+
+
+.ToB td{
+    border: solid #343a40 2px;
+}
+
+.ToB table{
+    width:100%;
+    margin: 100px 0;
+    text-align: center;
+
+}
+
+.ToB th{
+    height: 50px;
+    letter-spacing: 2px;
+}
+
+.ToB th, td{
+    padding: 10px 20px;
+}
+
+.ToB img{
+    height: 30px;
+    padding-bottom: 5px;
+    margin-right: 5px;
+}
+
+.DCWallet span:first-of-type{
+    -webkit-text-fill-color:#F3CC6D;
+}
+
+.DCWallet span:nth-of-type(2){
+    -webkit-text-fill-color: #D5D3CA;
+}
+
+.DCWallet span{
+    -webkit-text-stroke: 0.3px black;
+    font-family: 'Audiowide', cursive;
+    font-weight: normal;
+}
+
+.ToB .amount, .ToB span {
+    font-size: 20px;
+}
