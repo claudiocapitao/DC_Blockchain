@@ -19,10 +19,19 @@ router.route('/').get(async (req, res) => {
 router.post("/add", hasBody, createUser);
 
 
-router.route('/:id').get((req, res) => {
-    User.findById(req.params.id)
-        .then(user => res.json(user))
-        .catch(err => res.status(400).json('Error: ' + err));
+router.route('/update/:publicKey').post(async (req, res) => {
+
+    const users = await User.find();
+    let user = "";
+    for (var i = 0; i < users.length; i++) {
+        if (users[i].publicKey === req.params.publicKey) {
+            user = users[i];
+        }
+    }
+    res.json(user);
+    // User.find(req.params.publicKey)
+    //     .then(user => res.json(user))
+    //     .catch(err => res.status(400).json('Error: ' + err));
 });
 
 router.route('/getTransactions/:address').get(async (req, res) => {

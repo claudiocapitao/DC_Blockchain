@@ -396,7 +396,7 @@ const MineRewards = async (userWallet, userHash, userNonce) => {
             user.balance = rewardBalance;
 
             user.save()
-
+            io.emit('miningSuccess', user);
         })
         .catch(err => res.status(400).json('Error: ' + err));
 
@@ -409,7 +409,7 @@ const MineRewards = async (userWallet, userHash, userNonce) => {
         })
         .catch(err => res.status(400).json('Error: ' + err));
 
-    io.emit('miningSuccess', rewardBalance);
+
 
     const timestampNow = Date.now()
     const tHash = SHA256(rewardedUser.publicKey + 'DCWallet' + reward + timestampNow).toString();
